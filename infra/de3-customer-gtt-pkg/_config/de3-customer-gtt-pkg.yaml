@@ -1,8 +1,8 @@
 de3-customer-gtt-pkg:
   _provides_capability:
-  - de3-customer-gtt-pkg: 1.0.0
+  - de3-customer-gtt-pkg: 1.1.0
   _requires_capability:
-  - de3-k8s-pkg: ">=1.0.0"
+  - de3-k8s-pkg: ">=1.1.0"
 
   config_params:
     # ── Chicago Dell cluster — ALL settings inherited by every unit under this path ──
@@ -13,6 +13,10 @@ de3-customer-gtt-pkg:
       _region: us-central
       # Provider auth: cluster_name → $_DYNAMIC_DIR/kubeconfig/chicago-dell.yaml
       _provider_helm_cluster_name: chicago-dell
+      # Modules: helm_release is in de3-k8s-pkg (not found via default 3-tier resolution)
+      _modules_dir: de3-k8s-pkg/_modules
+      # tg-scripts: kubeconfig and tunnel scripts live in de3-k8s-pkg
+      _tg_scripts_dir: de3-k8s-pkg/_tg_scripts
       # Namespace for all chart units
       namespace: acme-product
       create_namespace: true
@@ -25,10 +29,21 @@ de3-customer-gtt-pkg:
       # The full kubeconfig YAML is stored in SOPS under the key below.
       kubeconfig_cluster_name: chicago-dell
       kubeconfig_sops_key: chicago_dell_kubeconfig
+      # SSH tunnel config (read by ensure-tunnel tg-script).
+      # Cluster API server is only reachable via SSH port-forward.
+      tunnel_ssh_host: 10.100.16.11
+      tunnel_ssh_user: root
+      tunnel_local_port: 10443
 
-    # Kubeconfig unit uses null provider (tg-script, no helm provider needed)
+    # Kubeconfig and tunnel units use null provider (tg-script, no helm provider needed).
+    # Override _modules_dir back to framework-pkg for null_resource__run-script.
     de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig:
       _provider: "null"
+      _modules_dir: _framework-pkg/_modules
+
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/tunnel:
+      _provider: "null"
+      _modules_dir: _framework-pkg/_modules
 
     # ── Chart-specific config ──────────────────────────────────────────────────
     de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/minio:
@@ -76,6 +91,8 @@ de3-customer-gtt-pkg:
       _env: dev
       _region: local
       _provider_helm_cluster_name: minikube
+      _modules_dir: de3-k8s-pkg/_modules
+      _tg_scripts_dir: de3-k8s-pkg/_tg_scripts
       namespace: acme-product
       create_namespace: true
       chart_wait: true
@@ -86,6 +103,7 @@ de3-customer-gtt-pkg:
 
     de3-customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/kubeconfig:
       _provider: "null"
+      _modules_dir: _framework-pkg/_modules
 
     de3-customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/minio:
       release_name: acme-product-minio
