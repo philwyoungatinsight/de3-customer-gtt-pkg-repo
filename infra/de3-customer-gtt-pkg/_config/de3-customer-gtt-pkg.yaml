@@ -1,0 +1,92 @@
+de3-customer-gtt-pkg:
+  _provides_capability:
+  - de3-customer-gtt-pkg: 1.0.0
+  _requires_capability:
+  - de3-k8s-pkg: ">=1.0.0"
+
+  config_params:
+    # ── Chicago Dell cluster — ALL settings inherited by every unit under this path ──
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell:
+      _provider: helm
+      _wave: k8s.apps
+      _env: prod
+      _region: us-central
+      # Provider auth: cluster_name → $_DYNAMIC_DIR/kubeconfig/chicago-dell.yaml
+      _provider_helm_cluster_name: chicago-dell
+      # Namespace for all chart units
+      namespace: acme-product
+      create_namespace: true
+      chart_wait: true
+      chart_timeout: 300
+      # Absolute path to gtt-halo-project helm charts on the developer machine.
+      # Override in your own config_source if your checkout is elsewhere.
+      helm_charts_base_dir: /home/pyoung/git/gtt-halo-project/k8s/helm-charts
+      # Kubeconfig unit config (read by kubeconfig-from-sops tg-script).
+      # The full kubeconfig YAML is stored in SOPS under the key below.
+      kubeconfig_cluster_name: chicago-dell
+      kubeconfig_sops_key: chicago_dell_kubeconfig
+
+    # Kubeconfig unit uses null provider (tg-script, no helm provider needed)
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig:
+      _provider: "null"
+
+    # ── Chart-specific config ──────────────────────────────────────────────────
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/minio:
+      release_name: acme-product-minio
+      chart_subpath: acme-product-minio/build_scripts/app_chart
+
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/minio-initializer:
+      release_name: acme-product-minio-initializer
+      chart_subpath: acme-product-minio-initializer/build_scripts/job_chart
+
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/test-db:
+      release_name: acme-product-test-db
+      chart_subpath: acme-product-test-db/build_scripts/db_chart
+
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-server:
+      release_name: acme-product-model-training-server
+      chart_subpath: acme-product-model-training-server/build_scripts/app_chart
+
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-trainer:
+      release_name: acme-product-model-training-trainer
+      chart_subpath: acme-product-model-training-trainer/build_scripts/job_chart
+      hf_model_cache_enabled: false
+      hf_model_cache_size: 10Gi
+      gpu_enabled: false
+      minio_training_dataset_bucket: training-datasets
+      minio_models_bucket: models
+      minio_training_results_bucket: training-results
+
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-evaluator:
+      release_name: acme-product-model-training-evaluator
+      chart_subpath: acme-product-model-training-evaluator/build_scripts/job_chart
+      hf_model_cache_enabled: false
+
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/vllm:
+      release_name: acme-product-vllm
+      chart_subpath: acme-product-vllm/build_scripts/cfg-helm-chart
+      # Empty models list: chart deploys in disabled state (no GPU pods created)
+      vllm_models_json: "[]"
+
+    # ── Minikube cluster (local dev) ─────────────────────────────────────────
+    # Uses kubeconfig-from-cli: minikube manages credentials locally, no SOPS needed.
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/minikube:
+      _provider: helm
+      _wave: k8s.apps
+      _env: dev
+      _region: local
+      _provider_helm_cluster_name: minikube
+      namespace: acme-product
+      create_namespace: true
+      chart_wait: true
+      chart_timeout: 300
+      helm_charts_base_dir: /home/pyoung/git/gtt-halo-project/k8s/helm-charts
+      kubeconfig_cluster_name: minikube
+      kubeconfig_cli_command: "minikube update-context --kubeconfig {kubeconfig_path}"
+
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/kubeconfig:
+      _provider: "null"
+
+    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/minio:
+      release_name: acme-product-minio
+      chart_subpath: acme-product-minio/build_scripts/app_chart
