@@ -1,4 +1,4 @@
-## 1.2.0  (2026-05-20, git: TBD)
+## 1.2.0  (2026-05-20, git: 33197b4)
 - Rename package: de3-customer-gtt-pkg → customer-gtt-pkg
 - Add external packages: _framework-pkg, de3-gui-pkg, k8s-pkg
 - New GCS backend bucket halo-bucket-20260520 in project customer-gtt-halo-20260520
