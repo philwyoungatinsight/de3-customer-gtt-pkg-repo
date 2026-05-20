@@ -1,0 +1,6 @@
+framework_backend:
+  type: gcs
+  config:
+    bucket: halo-bucket-20260520
+    project: customer-gtt-halo-20260520
+    location: US-CENTRAL1

@@ -1,22 +1,22 @@
-de3-customer-gtt-pkg:
+customer-gtt-pkg:
   _provides_capability:
-  - de3-customer-gtt-pkg: 1.1.0
+  - customer-gtt-pkg: 1.2.0
   _requires_capability:
-  - de3-k8s-pkg: ">=1.1.0"
+  - k8s-pkg: ">=1.2.0"
 
   config_params:
     # ── Chicago Dell cluster — ALL settings inherited by every unit under this path ──
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell:
       _provider: helm
       _wave: k8s.apps
       _env: prod
       _region: us-central
       # Provider auth: cluster_name → $_DYNAMIC_DIR/kubeconfig/chicago-dell.yaml
       _provider_helm_cluster_name: chicago-dell
-      # Modules: helm_release is in de3-k8s-pkg (not found via default 3-tier resolution)
-      _modules_dir: de3-k8s-pkg/_modules
-      # tg-scripts: kubeconfig and tunnel scripts live in de3-k8s-pkg
-      _tg_scripts_dir: de3-k8s-pkg/_tg_scripts
+      # Modules: helm_release is in k8s-pkg (not found via default 3-tier resolution)
+      _modules_dir: k8s-pkg/_modules
+      # tg-scripts: kubeconfig and tunnel scripts live in k8s-pkg
+      _tg_scripts_dir: k8s-pkg/_tg_scripts
       # Namespace for all chart units
       namespace: acme-product
       create_namespace: true
@@ -43,44 +43,45 @@ de3-customer-gtt-pkg:
 
     # Kubeconfig and tunnel units use null provider (tg-script, no helm provider needed).
     # Override _modules_dir back to framework-pkg for null_resource__run-script.
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig:
       _provider: "null"
       _modules_dir: _framework-pkg/_modules
 
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/tunnel:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/tunnel:
       _provider: "null"
       _modules_dir: _framework-pkg/_modules
 
     # ── Chart-specific config ──────────────────────────────────────────────────
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/minio:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/minio:
       release_name: acme-product-minio
       chart_subpath: acme-product-minio/build_scripts/app_chart
 
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/minio-initializer:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/minio-initializer:
       release_name: acme-product-minio-initializer
       chart_subpath: acme-product-minio-initializer/build_scripts/job_chart
 
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/test-db:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/test-db:
       release_name: acme-product-test-db
       chart_subpath: acme-product-test-db/build_scripts/db_chart
 
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-server:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-server:
       release_name: acme-product-model-training-server
       chart_subpath: acme-product-model-training-server/build_scripts/app_chart
 
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-trainer:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-trainer:
       release_name: acme-product-model-training-trainer
       chart_subpath: acme-product-model-training-trainer/build_scripts/job_chart
       hf_model_cache_enabled: true
       hf_model_cache_size: 250Gi
       gpu_enabled: true
 
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-evaluator:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-evaluator:
       release_name: acme-product-model-training-evaluator
-      chart_subpath: acme-product-model-training-evaluator/build_scripts/job_chart
+      chart_subpath: 
+        acme-product-model-training-evaluator/build_scripts/job_chart
       hf_model_cache_enabled: false
 
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/vllm:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/vllm:
       release_name: acme-product-vllm
       chart_subpath: acme-product-vllm/build_scripts/cfg-helm-chart
       # Empty models list: chart deploys in disabled state (no GPU pods created)
@@ -88,7 +89,7 @@ de3-customer-gtt-pkg:
 
     # ── Minikube cluster (local dev) ─────────────────────────────────────────
     # Uses kubeconfig-from-cli: minikube manages credentials locally, no SOPS needed.
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/minikube:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/minikube:
       _provider: helm
       _wave: k8s.apps
       _env: dev
@@ -104,10 +105,10 @@ de3-customer-gtt-pkg:
       kubeconfig_cluster_name: minikube
       kubeconfig_cli_command: "minikube update-context --kubeconfig {kubeconfig_path}"
 
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/kubeconfig:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/kubeconfig:
       _provider: "null"
       _modules_dir: _framework-pkg/_modules
 
-    de3-customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/minio:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/minio:
       release_name: acme-product-minio
       chart_subpath: acme-product-minio/build_scripts/app_chart

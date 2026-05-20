@@ -1,5 +1,0 @@
-framework_packages:
-- name: de3-customer-gtt-pkg
-  package_type: embedded
-  exportable: false
-  is_main_package: true

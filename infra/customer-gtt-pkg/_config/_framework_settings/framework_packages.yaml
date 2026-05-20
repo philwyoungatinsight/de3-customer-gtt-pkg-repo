@@ -1,0 +1,25 @@
+framework_packages:
+- name: _framework-pkg
+  package_type: external
+  exportable: true
+  repo: de3-framework-pkg-repo
+  source: https://github.com/philwyoungatinsight/de3-framework-pkg-repo.git
+  git_ref: main
+- name: de3-gui-pkg
+  package_type: external
+  exportable: true
+  repo: de3-gui-pkg-repo
+  source: https://github.com/philwyoungatinsight/de3-gui-pkg-repo.git
+  git_ref: main
+  config_source: customer-gtt-pkg
+- name: k8s-pkg
+  package_type: external
+  exportable: true
+  repo: de3-k8s-pkg-repo
+  source: https://github.com/philwyoungatinsight/de3-k8s-pkg-repo.git
+  git_ref: main
+  config_source: customer-gtt-pkg
+- name: customer-gtt-pkg
+  package_type: embedded
+  exportable: false
+  is_main_package: true

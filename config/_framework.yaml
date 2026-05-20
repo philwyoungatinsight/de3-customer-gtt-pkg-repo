@@ -1,5 +1,5 @@
 _framework:
-  main_package: de3-customer-gtt-pkg
+  main_package: customer-gtt-pkg
   labels:
     - name: _purpose
       value: GTT Halo customer deployment — Helm charts for the GTT Halo product on the Chicago Dell cluster
