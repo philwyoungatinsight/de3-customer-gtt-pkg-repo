@@ -77,20 +77,36 @@ gcloud projects add-iam-policy-binding "$PROJECT" \
   --role="roles/iam.serviceAccountAdmin"
 ```
 
-## Adding a new developer
+## Managing developers
 
-For each developer, grant them permission to impersonate the SA:
+The `developers[]` list in `gcp_seed_secrets.sops.yaml` is authoritative. Edit the list
+and run `--sync-developers` to reconcile GCP IAM: missing developers are granted access,
+removed developers have access revoked automatically.
 
-```bash
-PROJECT=customer-gtt-halo-20260520
-SA_EMAIL="terragrunt-sa@${PROJECT}.iam.gserviceaccount.com"
-DEVELOPER_EMAIL="developer@example.com"   # replace with their Google account
+### Add a developer
 
-gcloud iam service-accounts add-iam-policy-binding "$SA_EMAIL" \
-  --project="$PROJECT" \
-  --role="roles/iam.serviceAccountTokenCreator" \
-  --member="user:${DEVELOPER_EMAIL}"
-```
+1. Edit the secrets file:
+   ```bash
+   sops infra/customer-gtt-pkg/_config/_framework_settings/gcp_seed_secrets.sops.yaml
+   ```
+   Add under `gcp_seed_secrets.developers`:
+   ```yaml
+   - name: Jane Smith
+     email: jane.smith@example.com
+     role: developer
+   ```
 
-Then give them the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` export above and have them run
-`gcloud auth application-default login`.
+2. Sync (dry-run first):
+   ```bash
+   "$_GCP_SEED_MGR" --sync-developers --dry-run
+   "$_GCP_SEED_MGR" --sync-developers
+   ```
+
+3. Tell the developer to follow the "Day-to-day setup" steps above.
+
+### Remove a developer
+
+1. Delete their entry from `gcp_seed_secrets.developers` in the SOPS file.
+2. Run `"$_GCP_SEED_MGR" --sync-developers`.
+
+Their `serviceAccountTokenCreator` binding is revoked automatically.
