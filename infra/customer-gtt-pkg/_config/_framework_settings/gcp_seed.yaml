@@ -5,8 +5,13 @@ gcp_seed:
 
   _region: us-central1
 
-  # impersonation: no key file created; local gcloud session impersonates the SA.
-  # keyfile: creates a JSON key file (legacy).
+  # Controls the gcp-pkg seed script only — does NOT affect how `./run` authenticates.
+  # impersonation: seed creates the SA and grants you serviceAccountTokenCreator; no key
+  #   file is written. Developers then set GOOGLE_IMPERSONATE_SERVICE_ACCOUNT in their
+  #   shell so Terraform impersonates the SA. Without that env var, Terraform falls back
+  #   to the active gcloud account.
+  # keyfile: seed creates a JSON key file and stores it in SOPS (legacy; avoid).
+  # See infra/customer-gtt-pkg/_docs/gcp-auth.md for the full setup walkthrough.
   auth_method: impersonation
 
   state_bucket: halo-bucket-20260520
