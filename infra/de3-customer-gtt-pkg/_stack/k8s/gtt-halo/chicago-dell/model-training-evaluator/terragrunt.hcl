@@ -23,14 +23,5 @@ inputs = {
   chart_values = {
     "hfModelCache.enabled" = tostring(try(local.up.hf_model_cache_enabled, false))
   }
-
-  k8s_secrets = {
-    "model-training-secrets" = {
-      MINIO_ACCESS_KEY      = local.ups.minio_access_key
-      MINIO_SECRET_KEY      = local.ups.minio_secret_key
-      AWS_ACCESS_KEY_ID     = local.ups.aws_access_key_id
-      AWS_SECRET_ACCESS_KEY = local.ups.aws_secret_access_key
-      HF_TOKEN              = local.ups.hf_token
-    }
-  }
+  # model-training-secrets is created by the model-training-server unit; not here.
 }

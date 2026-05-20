@@ -20,7 +20,5 @@ inputs = {
   timeout          = try(tonumber(local.up.chart_timeout), 300)
   common_tags      = include.root.locals.common_tags
 
-  k8s_docker_secrets = {
-    "harbor-registry-secret" = local.ups.harbor_dockerconfigjson
-  }
+  # harbor-registry-secret is created by the minio unit; not here.
 }

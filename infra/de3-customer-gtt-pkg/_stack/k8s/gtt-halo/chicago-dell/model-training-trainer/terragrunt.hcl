@@ -25,17 +25,5 @@ inputs = {
     "hfModelCache.storage" = try(local.up.hf_model_cache_size, "10Gi")
     "gpu.enabled"          = tostring(try(local.up.gpu_enabled, false))
   }
-
-  k8s_secrets = {
-    "model-training-secrets" = {
-      MINIO_ACCESS_KEY              = local.ups.minio_access_key
-      MINIO_SECRET_KEY              = local.ups.minio_secret_key
-      MINIO_TRAINING_DATASET_BUCKET = try(local.up.minio_training_dataset_bucket, "")
-      MINIO_MODELS_BUCKET           = try(local.up.minio_models_bucket, "")
-      MINIO_TRAINING_RESULTS_BUCKET = try(local.up.minio_training_results_bucket, "")
-      AWS_ACCESS_KEY_ID             = local.ups.aws_access_key_id
-      AWS_SECRET_ACCESS_KEY         = local.ups.aws_secret_access_key
-      HF_TOKEN                      = local.ups.hf_token
-    }
-  }
+  # model-training-secrets is created by the model-training-server unit; not here.
 }

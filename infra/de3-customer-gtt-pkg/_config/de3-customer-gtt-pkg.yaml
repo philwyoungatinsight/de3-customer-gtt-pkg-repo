@@ -34,6 +34,12 @@ de3-customer-gtt-pkg:
       tunnel_ssh_host: 10.100.16.11
       tunnel_ssh_user: root
       tunnel_local_port: 10443
+      # MinIO bucket names — shared by initializer, server, trainer, evaluator.
+      minio_training_dataset_bucket: training-dataset-2
+      minio_models_bucket: trained-models
+      minio_training_results_bucket: training-results
+      minio_train_eval_config_bucket: training-eval-config
+      minio_mlflow_artifact_bucket: mlflow-311
 
     # Kubeconfig and tunnel units use null provider (tg-script, no helm provider needed).
     # Override _modules_dir back to framework-pkg for null_resource__run-script.
@@ -65,12 +71,9 @@ de3-customer-gtt-pkg:
     de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-trainer:
       release_name: acme-product-model-training-trainer
       chart_subpath: acme-product-model-training-trainer/build_scripts/job_chart
-      hf_model_cache_enabled: false
-      hf_model_cache_size: 10Gi
-      gpu_enabled: false
-      minio_training_dataset_bucket: training-datasets
-      minio_models_bucket: models
-      minio_training_results_bucket: training-results
+      hf_model_cache_enabled: true
+      hf_model_cache_size: 250Gi
+      gpu_enabled: true
 
     de3-customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-evaluator:
       release_name: acme-product-model-training-evaluator
