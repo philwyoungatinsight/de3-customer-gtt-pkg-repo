@@ -1,6 +1,6 @@
 customer-gtt-pkg:
   _provides_capability:
-  - customer-gtt-pkg: 1.2.0
+  - customer-gtt-pkg: 1.3.0
   _requires_capability:
   - k8s-pkg: ">=1.2.0"
 
@@ -52,40 +52,45 @@ customer-gtt-pkg:
       _modules_dir: _framework-pkg/_modules
 
     # ── Chart-specific config ──────────────────────────────────────────────────
-    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/minio:
+    # Re-establish helm provider for all chart units inside kubeconfig/charts/.
+    # Overrides the _provider: "null" inherited from chicago-dell/kubeconfig.
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig/charts:
+      _provider: helm
+      _modules_dir: k8s-pkg/_modules
+
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig/charts/minio:
       release_name: acme-product-minio
       chart_subpath: acme-product-minio/build_scripts/app_chart
 
-    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/minio-initializer:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig/charts/minio-initializer:
       release_name: acme-product-minio-initializer
       chart_subpath: acme-product-minio-initializer/build_scripts/job_chart
 
-    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/test-db:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig/charts/test-db:
       release_name: acme-product-test-db
       chart_subpath: acme-product-test-db/build_scripts/db_chart
 
-    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-server:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig/charts/vllm:
+      release_name: acme-product-vllm
+      chart_subpath: acme-product-vllm/build_scripts/cfg-helm-chart
+      # Empty models list: chart deploys in disabled state (no GPU pods created)
+      vllm_models_json: "[]"
+
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig/charts/model-training/server:
       release_name: acme-product-model-training-server
       chart_subpath: acme-product-model-training-server/build_scripts/app_chart
 
-    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-trainer:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig/charts/model-training/trainer:
       release_name: acme-product-model-training-trainer
       chart_subpath: acme-product-model-training-trainer/build_scripts/job_chart
       hf_model_cache_enabled: true
       hf_model_cache_size: 250Gi
       gpu_enabled: true
 
-    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/model-training-evaluator:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/kubeconfig/charts/model-training/evaluator:
       release_name: acme-product-model-training-evaluator
-      chart_subpath: 
-        acme-product-model-training-evaluator/build_scripts/job_chart
+      chart_subpath: acme-product-model-training-evaluator/build_scripts/job_chart
       hf_model_cache_enabled: false
-
-    customer-gtt-pkg/_stack/k8s/gtt-halo/chicago-dell/vllm:
-      release_name: acme-product-vllm
-      chart_subpath: acme-product-vllm/build_scripts/cfg-helm-chart
-      # Empty models list: chart deploys in disabled state (no GPU pods created)
-      vllm_models_json: "[]"
 
     # ── Minikube cluster (local dev) ─────────────────────────────────────────
     # Uses kubeconfig-from-cli: minikube manages credentials locally, no SOPS needed.
@@ -95,8 +100,8 @@ customer-gtt-pkg:
       _env: dev
       _region: local
       _provider_helm_cluster_name: minikube
-      _modules_dir: de3-k8s-pkg/_modules
-      _tg_scripts_dir: de3-k8s-pkg/_tg_scripts
+      _modules_dir: k8s-pkg/_modules
+      _tg_scripts_dir: k8s-pkg/_tg_scripts
       namespace: acme-product
       create_namespace: true
       chart_wait: true
@@ -109,6 +114,10 @@ customer-gtt-pkg:
       _provider: "null"
       _modules_dir: _framework-pkg/_modules
 
-    customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/minio:
+    customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/kubeconfig/charts:
+      _provider: helm
+      _modules_dir: k8s-pkg/_modules
+
+    customer-gtt-pkg/_stack/k8s/gtt-halo/minikube/kubeconfig/charts/minio:
       release_name: acme-product-minio
       chart_subpath: acme-product-minio/build_scripts/app_chart

@@ -7,7 +7,7 @@ locals {
   up = include.root.locals.unit_params
 
   config_files = [
-    "${include.root.locals.stack_root}/infra/de3-customer-gtt-pkg/_config/de3-customer-gtt-pkg.yaml",
+    "${include.root.locals.stack_root}/infra/customer-gtt-pkg/_config/customer-gtt-pkg.yaml",
   ]
   config_hash = sha256(join("", [for f in local.config_files : filesha256(f)]))
 }

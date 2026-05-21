@@ -1,3 +1,9 @@
+## 1.3.0  (2026-05-21, git: TBD)
+- Move all helm chart units under kubeconfig/charts/ at any depth
+- Fix cluster.hcl dependency paths to work at arbitrary directory depth
+- Group model-training charts under model-training/ subdirectory
+- Fix stale de3-customer-gtt-pkg references in tunnel and minikube/kubeconfig
+
 ## 1.2.0  (2026-05-20, git: 33197b4)
 - Rename package: de3-customer-gtt-pkg → customer-gtt-pkg
 - Add external packages: _framework-pkg, de3-gui-pkg, k8s-pkg

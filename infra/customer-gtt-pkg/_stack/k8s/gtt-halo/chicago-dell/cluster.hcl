@@ -3,7 +3,7 @@
 # Structural boilerplate only: no deployment-specific values permitted here.
 
 dependency "kubeconfig" {
-  config_path = "${path_relative_to_include()}/kubeconfig"
+  config_path = "${dirname(find_in_parent_folders("cluster.hcl"))}/kubeconfig"
   mock_outputs = {
     result = "mock"
   }
@@ -11,7 +11,7 @@ dependency "kubeconfig" {
 }
 
 dependency "tunnel" {
-  config_path = "${path_relative_to_include()}/tunnel"
+  config_path = "${dirname(find_in_parent_folders("cluster.hcl"))}/tunnel"
   mock_outputs = {
     result = "mock"
   }
