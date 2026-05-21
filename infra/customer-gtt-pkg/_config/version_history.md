@@ -1,4 +1,4 @@
-## 1.3.0  (2026-05-21, git: TBD)
+## 1.3.0  (2026-05-21, git: 735d4d6)
 - Move all helm chart units under kubeconfig/charts/ at any depth
 - Fix cluster.hcl dependency paths to work at arbitrary directory depth
 - Group model-training charts under model-training/ subdirectory
